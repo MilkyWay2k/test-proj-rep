@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="static/style.css">
+    <script src="static/apply-styles.js"></script>
+    <title>Hotelli Waltikka</title>
+</head>
+<body>
+  <header>
+    <div class="logo"><img src="static/logo.png" alt="Logo"></div>
+    <nav>
+      <ul>
+          <li class="dropdown">
+              <a href="{{ url_for('rooms') }}">Rooms</a>
+              <div class="dropdown-content">
+                {% for floor in room_floors.values()|unique %}
+                    <a href="{{ url_for('rooms', floor=floor) }}">{{ floor }}</a>
+                {% endfor %}
+            </div>                                 
+          </li>
+          <li><a href="https://appdashboard-lvj8t85jdtbjekyoskr3el.streamlit.app">Data</a></li>
+          <li><a href="{{ url_for('customization') }}">Customization</a></li>
+          <li><a href="{{ url_for('settings') }}">Settings</a></li>
+          <li><a href="{{ url_for('weather') }}">Outside weather</a></li>
+          <li><img class="notify" src="static/notification.png" alt="Notify icon" id="notify" onclick="openPopup()"></li>
+      </ul>
+  </nav>
+</header>
+
+<div id="popup" class="popup">
+    <div class="popup-content">
+        <span class="close" onclick="closePopup()">&times;</span>
+        <p>Комнаты с параметрами, не в норме:</p>
+        <div class="room-container-popup">
+            {% for room_info in room_info_list %}
+            <div class="room-box-popup">
+                {% for keyword in ["Low temp.", "Low hum.", "Low CO2", "High temp.", "High hum.", "High CO2"] %}
+                    {% if keyword in room_info %}
+                        {{ room_info|replace(keyword, f'{keyword}<img src="static/down.png" alt="Down Icon" class="icon">')|replace(keyword, f'{keyword}<img src="static/up.png" alt="Up Icon" class="icon">')|safe }}
+                    {% endif %}
+                {% endfor %}
+            </div>
+            {% endfor %}                                                                                 
+        </div>
+    </div>
+</div>
+
+
+
+<div class="room-container">
+    {% for room_name in sorted_rooms %}
+    <div class="room-box {% if get_temperature_color(room_data[room_name].temperature, room_name) == 'red' or get_humidity_color(room_data[room_name].humidity, room_name) == 'red' or get_co2_color(room_data[room_name].co2, room_name) == 'red' or get_temperature_color(room_data[room_name].temperature, room_name) == 'blue' or get_humidity_color(room_data[room_name].humidity, room_name) == 'blue' or get_co2_color(room_data[room_name].co2, room_name) == 'blue' %}exceeded{% endif %}" id="room-box-{{ room_name }}">
+        <h3>{{ room_name }}</h3>
+        <p>Temperature 
+            <span class="data {{ get_temperature_color(room_data[room_name].temperature, room_name) }}">
+                {{ room_data[room_name].temperature }}
+                {% if get_temperature_color(room_data[room_name].temperature, room_name) in ['red', 'blue'] %}
+                    <img src="static/warning.png" alt="Warning" class="warning-icon">
+                {% endif %}
+            </span>
+        </p>
+        <p>Humidity 
+            <span class="data {{ get_humidity_color(room_data[room_name].humidity, room_name) }}">
+                {{ room_data[room_name].humidity }}
+                {% if get_humidity_color(room_data[room_name].humidity, room_name) in ['red', 'blue'] %}
+                    <img src="static/warning.png" alt="Warning" class="warning-icon">
+                {% endif %}
+            </span>
+        </p>
+        <p>CO2 
+            <span class="data {{ get_co2_color(room_data[room_name].co2, room_name) }}">
+                {{ room_data[room_name].co2 }}
+                {% if get_co2_color(room_data[room_name].co2, room_name) in ['red', 'blue'] %}
+                    <img src="static/warning.png" alt="Warning" class="warning-icon">
+                {% endif %}
+            </span>
+        </p>
+    </div>
+    {% endfor %}
+</div>
+
+
+</body>
+</html>

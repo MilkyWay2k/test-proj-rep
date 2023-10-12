@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Website Customization</title>
+    <link rel="stylesheet" href="static/style.css">
+    <script src="static/apply-styles.js"></script>
+    <link >
+    <style>
+        /* Style The Dropdown Button */
+        .dropbtn {
+           background-color: #4CAF50;
+           color: white;
+           padding: 16px;
+           font-size: 16px;
+           border: none;
+           cursor: pointer;
+         }
+         
+         /* The container <div> - needed to position the dropdown content */
+         .dropdown {
+           position: relative;
+           display: inline-block;
+         }
+         
+         /* Dropdown Content (Hidden by Default) */
+         .dropdown-content {
+           display: none;
+           position: absolute;
+           background-color: #f9f9f9;
+           min-width: 160px;
+           box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+           z-index: 1;
+         }
+         
+         /* Links inside the dropdown */
+         .dropdown-content a {
+           color: black;
+           padding: 12px 16px;
+           text-decoration: none;
+           display: block;
+         }
+         
+         /* Change color of dropdown links on hover */
+         .dropdown-content a:hover {background-color: #f1f1f1}
+         
+         /* Show the dropdown menu on hover */
+         .dropdown:hover .dropdown-content {
+           display: block;
+         }
+         
+         /* Change the background color of the dropdown button when the dropdown content is shown */
+         .dropdown:hover .dropbtn {
+           background-color: #3e8e41;
+         }
+         body {
+             margin: 0;
+             padding: 0;
+             font-family: Arial, sans-serif;
+         }
+ 
+         /* Header Styles */
+        header {
+            background-color: #3c3c3b;
+            padding: 10px 0;
+            text-align: center;
+            color: white;
+            margin-bottom: 20px;
+        }
+
+        .logo img {
+            max-width: 200px;
+            height: auto;
+        }
+
+        nav ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        nav ul li {
+            display: inline;
+            margin-right: 20px;
+            color: white;
+        }
+
+        nav ul li a {
+            text-decoration: none;
+            color: white;
+            font-weight: bold;
+            transition: color 0.3s ease;
+        }
+
+        nav ul li a:hover {
+            color: #000000;
+        }
+
+        /* Dropdown Styles */
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropbtn {
+            background-color: #4CAF50;
+            color: white;
+            padding: 16px;
+            font-size: 16px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #f9f9f9;
+            min-width: 160px;
+            box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+            z-index: 1;
+        }
+
+        .dropdown-content a {
+            color: black;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+        }
+
+        .dropdown-content a:hover {
+            background-color: #f1f1f1;
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+ 
+         table {
+             border-collapse: collapse;
+             width: 100%;
+             margin-top: 20px;
+         }
+ 
+         th, td {
+             border: 1px solid rgb(145, 128, 128);
+             padding: 8px;
+             text-align: left;
+         }
+ 
+         th {
+             background-color: rgb(145, 128, 128);
+             color: white;
+         }
+ 
+         .data {
+             font-weight: bold;
+         }
+     </style>
+    
+</head>
+<header>
+    <div class="logo"><img src="static/logo.png" alt="Logo"></div>
+    <nav>
+        <ul>
+            <li><a href="{{ url_for('rooms') }}">Rooms</a></li>
+            <li><a href="https://appdashboard-lvj8t85jdtbjekyoskr3el.streamlit.app">Data</a></li>
+            <li><a href="{{ url_for('customization') }}">Customization</a></li>
+            <li><a href="{{ url_for('settings') }}">Settings</a></li>
+            <li><a href="{{ url_for('weather') }}">Outside weather</a></li>
+        </ul>
+    </nav>
+</header>
+<body>
+    <div class="customization-container">
+        <h1>Website Customization</h1>
+        <br>
+        <!-- Background color customization -->
+        <p>Change the background color of the website:</p>
+        <input type="color" id="bg-color-picker" class="color-picker" value="#ffffff">
+        <br>
+        <br>
+
+        <p>Change the color of the room boxes:</p>
+        <input type="color" id="box-color-picker" class="color-picker" value="#c4dfaa">
+        <br>
+
+
+        <!-- Font customization -->
+        <p>Change the font:</p>
+        <select id="font-selector">
+            <option value="Arial, sans-serif">Arial</option>
+            <option value="Georgia, serif">Georgia</option>
+            <option value="Times New Roman, serif">Times New Roman</option>
+            <option value="Verdana, sans-serif">Verdana</option>
+        </select>
+        <br>
+        <br>
+
+        <!-- Apply button -->
+        <button onclick="applyCustomizations()">Apply</button>
+        <br>
+        <br>
+    </div>
+
+<script>
+// Function to apply customizations
+function applyCustomizations() {
+    const bgColorPicker = document.getElementById("bg-color-picker");
+    const boxColorPicker = document.getElementById("box-color-picker");
+    const fontSelector = document.getElementById("font-selector");
+
+    const selectedBgColor = bgColorPicker.value;
+    const selectedBoxColor = boxColorPicker.value;
+    const selectedFont = fontSelector.value;
+
+    // Apply background color and font to the entire page
+    document.body.style.backgroundColor = selectedBgColor;
+    document.body.style.fontFamily = selectedFont;
+
+    // Apply box color to each room box
+    const roomBoxes = document.querySelectorAll(".room-box");
+    roomBoxes.forEach((roomBox) => {
+        roomBox.style.backgroundColor = selectedBoxColor;
+    });
+
+    // Store preferences in local storage
+    localStorage.setItem("bgColor", selectedBgColor);
+    localStorage.setItem("boxColor", selectedBoxColor);
+    localStorage.setItem("font", selectedFont);
+}
+
+// Initialize the room box color when the page loads
+document.addEventListener("DOMContentLoaded", function () {
+    const storedBoxColor = localStorage.getItem("boxColor");
+    if (storedBoxColor) {
+        const roomBoxes = document.querySelectorAll(".room-box");
+        roomBoxes.forEach((roomBox) => {
+            roomBox.style.backgroundColor = storedBoxColor;
+        });
+    }
+});
+    </script>
+</body>
+</html>

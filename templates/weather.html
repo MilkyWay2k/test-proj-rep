@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather Checker</title>
+    <link rel="stylesheet" href="static/style.css">
+    <script src="static/apply-styles.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 20px;
+        }
+
+        #weather {
+            margin-top: 20px;
+        }
+
+        input[type="text"] {
+            padding: 8px;
+        }
+
+        button {
+            padding: 8px 20px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="logo"><img src="static/logo.png" alt="Logo"></div>
+        <nav>
+            <ul>
+                <li><a href="{{ url_for('rooms') }}">Rooms</a></li>
+                <li><a href="https://appdashboard-lvj8t85jdtbjekyoskr3el.streamlit.app">Data</a></li>
+                <li><a href="{{ url_for('customization') }}">Customization</a></li>
+                <li><a href="{{ url_for('settings') }}">Settings</a></li>
+                <li><a href="{{ url_for('weather') }}">Outside weather</a></li>
+            </ul>
+        </nav>
+    </header>
+    <h1>Weather Checker</h1>
+    <label for="location">Enter Location: </label>
+    <input type="text" id="location" placeholder="City name">
+    <button id="checkWeatherBtn">Check Weather</button>
+
+    <div id="weather"></div>
+
+    <script>
+        const apiKey = "b506384cb61fcc9ded03047a9f156c23";
+        const weatherContainer = document.getElementById("weather");
+        const locationInput = document.getElementById("location");
+        const checkWeatherBtn = document.getElementById("checkWeatherBtn");
+
+        function getWeather(location) {
+            const apiUrl = `https://api.openweathermap.org/data/2.5/forecast?q=${location}&units=metric&appid=${apiKey}`;
+
+            fetch(apiUrl)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.cod === "200") {
+                        const currentWeather = data.list[0];
+                        const upcomingWeather = data.list.slice(1, 4);
+                        const city = data.city.name;
+                        const currentTemperature = currentWeather.main.temp;
+                        const currentWeatherDescription = currentWeather.weather[0].description;
+                        const currentHumidity = currentWeather.main.humidity;
+
+                        let upcomingWeatherHtml = "<h2>Upcoming Weather</h2>";
+                        upcomingWeather.forEach(hourlyWeather => {
+                            const time = new Date(hourlyWeather.dt * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                            const temperature = hourlyWeather.main.temp;
+                            const description = hourlyWeather.weather[0].description;
+                            upcomingWeatherHtml += `<p>${time}: ${description}, ${temperature} Temperature(°C)</p>`;
+                        });
+
+                        weatherContainer.innerHTML = `<h2>Current Weather in ${city}</h2>
+                                                     <p>${currentWeatherDescription}, ${currentTemperature} Temperature(°C)</p>
+                                                     <p>Humidity: ${currentHumidity}%</p>
+                                                     ${upcomingWeatherHtml}`;
+                    } else {
+                        weatherContainer.innerHTML = "Weather information not available for the specified location.";
+                    }
+                })
+                .catch(error => {
+                    weatherContainer.innerHTML = "Error fetching weather data.";
+                });
+        }
+
+        function updateWeather() {
+            const location = locationInput.value || "Valkeakoski";
+            getWeather(location);
+        }
+
+        checkWeatherBtn.addEventListener("click", updateWeather);
+        updateWeather();
+        setInterval(updateWeather, 600000);
+    </script>
+</body>
+</html>

@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="static/style.css">
+    <script src="static/apply-styles.js"></script>
+
+</head>
+<body>
+    <style>
+       /* Style The Dropdown Button */
+       .dropbtn {
+          background-color: #4CAF50;
+          color: white;
+          padding: 16px;
+          font-size: 16px;
+          border: none;
+          cursor: pointer;
+        }
+        
+        /* The container <div> - needed to position the dropdown content */
+        .dropdown {
+          position: relative;
+          display: inline-block;
+        }
+        
+        /* Dropdown Content (Hidden by Default) */
+        .dropdown-content {
+          display: none;
+          position: absolute;
+          background-color: #f9f9f9;
+          min-width: 160px;
+          box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+          z-index: 1;
+        }
+        
+        /* Links inside the dropdown */
+        .dropdown-content a {
+          color: black;
+          padding: 12px 16px;
+          text-decoration: none;
+          display: block;
+        }
+        
+        /* Change color of dropdown links on hover */
+        .dropdown-content a:hover {background-color: #f1f1f1}
+        
+        /* Show the dropdown menu on hover */
+        .dropdown:hover .dropdown-content {
+          display: block;
+        }
+        
+        /* Change the background color of the dropdown button when the dropdown content is shown */
+        .dropdown:hover .dropbtn {
+          background-color: #3e8e41;
+        }
+         .settings-container {
+             
+             max-width: 600px;
+             margin: 0 auto;
+             padding: 20px;
+             background-color: #fff;
+             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+             border-radius: 5px;
+             display: block;
+        }
+         body {
+             margin: 0;
+             padding: 0;
+             font-family: Arial, sans-serif;
+         }
+ 
+         .logo img {
+             max-width: 200px;
+             height: auto;
+         }
+ 
+         nav ul {
+             list-style-type: none;
+             padding: 0;
+         }
+ 
+         nav ul li {
+             display: inline;
+             margin-right: 20px;
+         }
+ 
+         nav ul li a {
+             text-decoration: none;
+             color: white;
+             font-weight: bold;
+             transition: color 0.3s ease;
+         }
+ 
+         nav ul li a:hover {
+             color: #000000;
+         }
+ 
+         table {
+             border-collapse: collapse;
+             width: 100%;
+             margin-top: 20px;
+         }
+ 
+         th, td {
+             border: 1px solid rgb(145, 128, 128);
+             padding: 8px;
+             text-align: left;
+         }
+ 
+         th {
+             background-color: rgb(145, 128, 128);
+             color: white;
+         }
+ 
+         .data {
+             font-weight: bold;
+         }
+     </style>
+    
+</head>
+<header>
+    <div class="logo"><img src="static/logo.png" alt="Logo"></div>
+    <nav>
+        <ul>
+            <li><a href="{{ url_for('rooms') }}">Rooms</a></li>
+            <li><a href="https://appdashboard-lvj8t85jdtbjekyoskr3el.streamlit.app">Data</a></li>
+            <li><a href="{{ url_for('customization') }}">Customization</a></li>
+            <li><a href="{{ url_for('settings') }}">Settings</a></li>
+            <li><a href="{{ url_for('weather') }}">Outside weather</a></li>
+        </ul>
+    </nav>
+</header>
+<body>
+    
+    <div class="settings-container">
+        <h1>Website Settings</h1>
+        <br>
+        <form id="settings-form" method="POST" action="/apply_settings">
+            <p><b>Temperature Unit:</b></p>
+            <input type="radio" name="temperature-unit" value="Celsius" id="celsius" {% if current_temperature_unit == "Celsius" %}checked{% endif %}> <label for="celsius">Celsius</label>
+            <input type="radio" name="temperature-unit" value="Fahrenheit" id="fahrenheit" {% if current_temperature_unit == "Fahrenheit" %}checked{% endif %}> <label for="fahrenheit">Fahrenheit</label>      
+            <input type="hidden" id="temperature-unit" name="temperature-unit" value="{{ current_temperature_unit | default('Celsius') }}">
+            <br>
+            <br>
+            <p id="temperature-range"><b>Temperature Range:</b></p>
+            <label for="minTemp">Minimum:</label>
+            <input type="number" id="minTemp" name="minTemp" min="-50" max="100" step="1" value="{{ current_min_temp }}">
+            <label for="maxTemp">Maximum:</label>
+            <input type="number" id="maxTemp" name="maxTemp" min="-50" max="100" step="1" value="{{ current_max_temp }}">
+            <br>
+            <br>
+            <p><b>Humidity Levels:</b></p>
+            <label for="minHumidity">Minimum:</label>
+            <input type="number" id="minHumidity" name="minHumidity" min="0" max="100" step="1" value="{{ current_min_humidity }}">
+            <label for="maxHumidity">Maximum:</label>
+            <input type="number" id="maxHumidity" name="maxHumidity" min="0" max="100" step="1" value="{{ current_max_humidity }}">
+            <br>
+            <br>
+            <p><b>CO2 Levels:</b></p>
+            <label for="minCO2">Minimum:</label>
+            <input type="number" id="minCO2" name="minCO2" min="0" max="1000" step="1" value="{{ current_min_co2 }}">
+            <label for="maxCO2">Maximum:</label>
+            <input type="number" id="maxCO2" name="maxCO2" min="0" max="1000" step="1" value="{{ current_max_co2 }}">           
+            <br>
+            <br>
+            <br>
+            <p><b>Email Address for Warnings:</b></p>
+            <label for="emailCheckbox">Enable Email Notifications:</label>
+            <input type="checkbox" id="emailCheckbox" name="emailCheckbox">
+            <br>
+            <br>
+            <div id="emailField" style="display: none;">
+                <label for="emailAddress">Email:</label>
+                <input type="email" id="emailAddress" name="emailAddress" style="width: 210px">
+            </div>
+            <br>
+            <br>
+            <br>
+            <button type="submit">Apply</button>
+            <button id="default-values" type="button">Default values</button>
+            <br>
+        </form>
+    </div>
+    
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const settingsForm = document.getElementById("settings-form");
+            const applyButton = document.getElementById("apply-button");
+    
+            settingsForm.addEventListener("submit", function(event) {
+                const minTemp = document.getElementById("minTemp").value;
+                const maxTemp = document.getElementById("maxTemp").value;
+                const minCO2 = document.getElementById("minCO2").value;
+                const maxCO2 = document.getElementById("maxCO2").value;
+                const minHumidity = document.getElementById("minHumidity").value;
+                const maxHumidity = document.getElementById("maxHumidity").value;
+                const emailAddress = document.getElementById("emailAddress").value;
+    
+                if (
+                    minTemp === "" ||
+                    maxTemp === "" ||
+                    minCO2 === "" ||
+                    maxCO2 === "" ||
+                    minHumidity === "" ||
+                    maxHumidity === "" ||
+                    (document.getElementById("emailCheckbox").checked && emailAddress === "")
+                ) {
+                    event.preventDefault();
+    
+                    alert("Please fill in all required fields.");
+                }
+            });
+        });
+
+        const defaultSettings = document.getElementById("default-values");
+
+defaultSettings.addEventListener("click", function() {
+    fetch("/default_settings")
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById("minTemp").value = data.minTemp;
+            document.getElementById("maxTemp").value = data.maxTemp;
+            document.getElementById("minHumidity").value = data.minHumidity;
+            document.getElementById("maxHumidity").value = data.maxHumidity;
+            document.getElementById("minCO2").value = data.minCO2;
+            document.getElementById("maxCO2").value = data.maxCO2;
+        })
+});
+
+        document.addEventListener("DOMContentLoaded", function() {
+            const emailCheckbox = document.getElementById("emailCheckbox");
+            const emailField = document.getElementById("emailField");
+
+            emailCheckbox.addEventListener("change", function() {
+                if (emailCheckbox.checked) {
+                    emailField.style.display = "block";
+                    document.getElementById("emailAddress").disabled = false;
+                    document.getElementById("emailAddress").required = true;
+                } else {
+                    emailField.style.display = "none";
+                    document.getElementById("emailAddress").disabled = true;
+                    document.getElementById("emailAddress").required = false;
+                }
+            });
+        });
+
+        document.addEventListener("DOMContentLoaded", function() {
+        const temperatureUnitRadios = document.getElementsByName("temperature-unit");
+        const temperatureRange = document.getElementById("temperature-range");
+
+        for (const radio of temperatureUnitRadios) {
+            radio.addEventListener("change", function() {
+                const selectedUnit = document.querySelector('input[name="temperature-unit"]:checked').value;
+
+                if (selectedUnit === "Celsius") {
+                    temperatureRange.innerHTML = "<b>Temperature Range in Celsius:</b>";
+                } else if (selectedUnit === "Fahrenheit") {
+                    temperatureRange.innerHTML = "<b>Temperature Range in Fahrenheit:</b>";
+                }
+            });
+        }
+    });
+    </script>    
+
+</body>
+</html>
